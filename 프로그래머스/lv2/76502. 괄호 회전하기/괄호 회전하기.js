@@ -13,23 +13,6 @@ function solution(s) {
     return answer;
 }
 
-function seperate(arr){
-    let sm = [], md = [], lg = [];
-    let count = 0
-    
-    arr.forEach((el)=>{
-        if(el==='(' || el===')') sm.push(el)
-        else if(el==='{' || el==='}') md.push(el)
-        else if(el==='[' || el===']') lg.push(el)
-    })
-    
-    const isSmRight = isRight(sm)
-    const isMdRight = isRight(md)
-    const isLgRight = isRight(lg)
-    
-    return (isSmRight===true && isMdRight===true && isLgRight===true)?true:false
-}
-
 function isRight(arr){
     const stack = [];
 
