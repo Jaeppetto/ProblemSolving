@@ -6,10 +6,10 @@ function solution(maps) {
     const height = maps.length
     const width = maps[0].length
     
-    const stack = [{coorY:0,coorX:0,count:1}]
+    const queue = [{coorY:0,coorX:0,count:1}]
 
-    while(stack.length !== 0){
-        const {coorY,coorX,count} = stack.pop()
+    while(queue.length !== 0){
+        const {coorY,coorX,count} = queue.pop()
 
         for(let i=0;i<4;i++){
             const newCoorY = coorY + dx[i]
@@ -22,7 +22,7 @@ function solution(maps) {
 
             if(newCoorY >=0 && newCoorY < height && newCoorX >=0 && newCoorX < width && maps[newCoorY][newCoorX] === 1){
                 maps[newCoorY][newCoorX] = 0
-                stack.unshift({coorY:newCoorY, coorX:newCoorX, count : count+1})
+                queue.unshift({coorY:newCoorY, coorX:newCoorX, count : count+1})
             }
         }
     }
