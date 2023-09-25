@@ -1,21 +1,55 @@
-function solution(array, commands) {
-  var answer = [];
-  for (let i = 0; i < commands.length; i++) {
-    let temp = array.slice(commands[i][0] - 1, commands[i][1]);
-    temp.sort((a, b) => a - b);
-
-    console.log(temp[commands[i][2] - 1]);
+class Node {
+  constructor(value) {
+    this.value = value;
+    this.next = null;
   }
-  return answer;
 }
 
-solution(
-  [1, 5, 2, 6, 3, 7, 4],
-  [
-    [2, 5, 3],
-    [4, 4, 1],
-    [1, 7, 3],
-  ]
-);
+class Queue {
+  constructor() {
+    this.head = null;
+    this.tail = null;
+  }
 
-// console.log([1, 5, 2, 6, 3, 7, 4].slice(1, 5));
+  enqueue(newValue) {
+    const newNode = new Node(newValue);
+    if (this.head === null) {
+      this.head = this.tail = newNode;
+    } else {
+      this.tail.next = newNode;
+      this.tail = newNode;
+    }
+  }
+
+  dequeue() {
+    const value = this.head.value;
+    this.head = this.head.next;
+    return value;
+  }
+
+  peek() {
+    return this.head.value;
+  }
+}
+
+function solution(priorities, location) {
+  const queue = new Queue();
+  for (let i = 0; i < priorities.length; i++) {
+    queue.enqueue([priorities[i], i]);
+  }
+
+  priorities.sort((a, b) => b - a);
+
+  let count = 0;
+  while (queue.size > 0) {
+    const currentValue = queue.peek();
+    if (currentValue[0] < priorities[count]) {
+      queue.enqueue(queue.dequeue());
+    } else {
+      count++;
+      if (location === value[1]) return count;
+    }
+  }
+
+  return count;
+}
