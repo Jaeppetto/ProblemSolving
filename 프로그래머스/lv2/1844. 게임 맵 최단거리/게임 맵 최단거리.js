@@ -1,31 +1,30 @@
+// 1. 최단거리? BFS(queue)
+// 2. 이동 시마다 Score 계산 후 목표지점 도달 시의 Score 반환
+
 function solution(maps) {
-    let answer = -1;
-    
     const dx = [0,0,1,-1]
-    const dy = [1,-1,0,0]    
-    const height = maps.length
-    const width = maps[0].length
+    const dy = [1,-1,0,0]
+    const queue = [[0,0,1]]
     
-    const queue = [{coorY:0,coorX:0,count:1}]
-
-    while(queue.length !== 0){
-        const {coorY,coorX,count} = queue.pop()
-
+    while(queue.length>0){
+        let [currentX,currentY,score] = queue.shift()
+        const height = maps.length-1
+        const width = maps[0].length-1
+        
+        // 목표 지점 도달 시 Score 반환
+        if(currentX === width && currentY ===height) return score
+        
         for(let i=0;i<4;i++){
-            const newCoorY = coorY + dx[i]
-            const newCoorX = coorX + dy[i]
-
-            if(coorY === height-1 && coorX === width - 1){
-                answer = count
-                return answer
-            }
-
-            if(newCoorY >=0 && newCoorY < height && newCoorX >=0 && newCoorX < width && maps[newCoorY][newCoorX] === 1){
-                maps[newCoorY][newCoorX] = 0
-                queue.unshift({coorY:newCoorY, coorX:newCoorX, count : count+1})
+            const nextX = currentX + dx[i]
+            const nextY = currentY + dy[i]
+            
+            // 이동하려는 좌표가 맵 안에 있고, 유효한 길인 경우 이동
+            if(nextX >=0 && nextY >=0 && nextX <= width && nextY <= height && maps[nextY][nextX] === 1){
+                // 이동할 좌표 방문 표시 후 큐에 추가
+                maps[nextY][nextX] = 0
+                queue.push([nextX,nextY,score+1])
             }
         }
     }
-
-    return answer;
+    return -1
 }
