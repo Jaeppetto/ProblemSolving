@@ -1,55 +1,72 @@
 class Node {
   constructor(value) {
     this.value = value;
-    this.next = null;
+    this.left = null;
+    this.right = null;
   }
 }
 
 class Queue {
   constructor() {
-    this.head = null;
-    this.tail = null;
+    this.queue = [];
+    this.front = 0;
+    this.rear = 0;
   }
 
-  enqueue(newValue) {
-    const newNode = new Node(newValue);
-    if (this.head === null) {
-      this.head = this.tail = newNode;
-    } else {
-      this.tail.next = newNode;
-      this.tail = newNode;
-    }
+  // 큐에 요소 추가
+  enqueue(value) {
+    this.queue[this.rear++] = value;
   }
 
+  // 큐에 요소 제거
   dequeue() {
-    const value = this.head.value;
-    this.head = this.head.next;
+    const value = this.queue[this.front];
+    delete this.queue[this.front];
+    this.front++;
+
     return value;
   }
 
   peek() {
-    return this.head.value;
+    return this.queue[this.front];
+  }
+
+  size() {
+    return this.rear - this.front;
   }
 }
 
-function solution(priorities, location) {
-  const queue = new Queue();
-  for (let i = 0; i < priorities.length; i++) {
-    queue.enqueue([priorities[i], i]);
+class Tree {
+  constructor(node) {
+    this.root = node;
   }
 
-  priorities.sort((a, b) => b - a);
+  display() {
+    // Level Order
+    const queue = new Queue();
+    queue.enqueue(this.root);
 
-  let count = 0;
-  while (queue.size > 0) {
-    const currentValue = queue.peek();
-    if (currentValue[0] < priorities[count]) {
-      queue.enqueue(queue.dequeue());
-    } else {
-      count++;
-      if (location === value[1]) return count;
+    // 큐 안에 값이 들어있으면,
+    while (queue.size()) {
+      // 하나 빼
+      const currentNode = queue.dequeue();
+      // 뺀 값을 출력
+      console.log(currentNode.value);
+
+      // 타고 들어가
+      if (currentNode.left) queue.enqueue(currentNode.left);
+      if (currentNode.right) queue.enqueue(currentNode.right);
     }
   }
-
-  return count;
 }
+
+const tree = new Tree(new Node(9));
+tree.root.left = new Node(3);
+tree.root.right = new Node(8);
+
+tree.root.left.left = new Node(2);
+tree.root.left.right = new Node(5);
+tree.root.right.right = new Node(7);
+tree.root.left.right.right = new Node(4);
+
+tree.display();
