@@ -1,90 +1,108 @@
-const fs = require("fs");
-const filePath = process.platform === "linux" ? "/dev/stdin" : "../input.txt";
-let input = fs.readFileSync(filePath).toString().trim().split("\n");
+const filePath = process.platform === 'linux' ? '/dev/stdin' : './예제1.txt';
 
+let input = require('fs')
+  .readFileSync(filePath)
+  .toString()
+  .trim()
+  .split('\n')
+  .map((el) => el.split(' '));
 
-class MinHeap {// idx = 1에 min value 저장
-    constructor() {
-      this.heap = [BigInt(0)];
-    }
-  
-  // 삭제과정에서 부모가 자식보다 큰 경우 교체
-  isBiggerThanChildren(idx) {
-    // 자식이 존재하는지
-    if (this.heap[2 * idx]) {
-            return (
-                this.heap[idx] > this.heap[2 * idx] ||
-                this.heap[idx] > this.heap[2 * idx + 1]
-            );
-        } 
-  
-    else {
-        return false;
-    }
-}
+const NM = input.shift().map(Number);
+const array = input.shift().map(BigInt);
+const N = NM[0];
+const M = NM[1];
 
-  
-    swapValue(idx1, idx2) {
-      [this.heap[idx1], this.heap[idx2]] = [this.heap[idx2], this.heap[idx1]];
-    }
-  
-    insert(value) {
-      this.heap.push(value);
-  
-      let currentIdx = this.heap.length - 1;
-      let parentIdx = Math.floor(currentIdx / 2);
-  
-      while (currentIdx > 1 && this.heap[currentIdx] < this.heap[parentIdx]) {
-        this.swapValue(currentIdx, parentIdx);
-        currentIdx = parentIdx;
-        parentIdx = Math.floor(currentIdx / 2);
-      }
+class MinHeap {
+  constructor() {
+    this.array = [BigInt(0)];
+  }
+
+  push(value) {
+    this.array.push(value);
+    this.bubbleUp();
+  }
+
+  pop() {
+    if (this.isEmpty()) return null;
+
+    const returnValue = this.array[1];
+    const lastNode = this.array.pop();
+
+    if (!this.isEmpty()) {
+      this.array[1] = lastNode;
+      this.sinkDown();
     }
 
-    sum(){
-        return this.heap.reduce((a, b) => a+b, BigInt(0));
-    }
-  
-    remove() {
-      if (this.heap.length > 1) {
-        if (this.heap.length === 2) return this.heap.pop();
-  
-        let removedVal = this.heap[1];
-        this.heap[1] = this.heap.pop();
-        let currentIdx = 1;
-  
-        while (this.isBiggerThanChildren(currentIdx)) {
-            if ( this.heap[2 * currentIdx + 1] < this.heap[2 * currentIdx]) {
-                if (this.heap[2 * currentIdx + 1] < this.heap[currentIdx]) {
-                    this.swapValue(2 * currentIdx + 1, currentIdx);
-                    currentIdx = 2 * currentIdx + 1;
-                }
-            } else {
-                if (this.heap[2 * currentIdx] < this.heap[currentIdx]) {
-                    this.swapValue(2 * currentIdx, currentIdx);
-                    currentIdx = 2 * currentIdx;
-                }
-            }
-        }
-  
-        return removedVal;
-      } else return null;
+    return returnValue;
+  }
+
+  isEmpty() {
+    return this.array.length === 1;
+  }
+
+  bubbleUp() {
+    let index = this.array.length - 1;
+
+    while (index > 1) {
+      const parentIndex = Math.floor(index / 2);
+      if (this.array[parentIndex] <= this.array[index]) break;
+
+      [this.array[parentIndex], this.array[index]] = [
+        this.array[index],
+        this.array[parentIndex],
+      ];
+      index = parentIndex;
     }
   }
-  
-let [N, M] = input.shift().split(' ').map(Number)
-let arr = input.shift().split(' ').map(BigInt);
-let pq = new MinHeap();
 
-for(let i=0; i<arr.length; i++){
-    pq.insert(BigInt(arr[i]))
+  sinkDown() {
+    let index = 1;
+    const length = this.array.length;
+
+    while (true) {
+      let minIndex = index;
+      const leftChildIndex = 2 * index;
+      const rightChildIndex = 2 * index + 1;
+
+      if (
+        leftChildIndex < length &&
+        this.array[leftChildIndex] < this.array[minIndex]
+      ) {
+        minIndex = leftChildIndex;
+      }
+
+      if (
+        rightChildIndex < length &&
+        this.array[rightChildIndex] < this.array[minIndex]
+      ) {
+        minIndex = rightChildIndex;
+      }
+
+      if (minIndex === index) break;
+
+      [this.array[index], this.array[minIndex]] = [
+        this.array[minIndex],
+        this.array[index],
+      ];
+      index = minIndex;
+    }
+  }
 }
 
-while(M > 0){
-    let first = pq.remove();
-    let second = pq.remove();
-    pq.insert(first+second);
-    pq.insert(first+second);
-    M--;
+let heap = new MinHeap();
+
+for (let i = 0; i < array.length; i++) {
+  heap.push(array[i]);
 }
-console.log(pq.sum().toString());
+
+for (let i = 0; i < M; i++) {
+  let min1 = heap.pop();
+  let min2 = heap.pop();
+  let sum = min1 + min2;
+  heap.push(sum);
+  heap.push(sum);
+}
+
+const answer = heap.array.reduce((a, b) => a + b, BigInt(0)).toString();
+
+console.log(answer);
