@@ -93,16 +93,16 @@ input.forEach(([start, end, distance]) => {
 
 const dijkstra = (startNode, endNode) => {
   const dist = Array(N).fill(Infinity);
-  const visited = Array(N).fill(false);
   const pq = new MinHeap();
   pq.enqueue({ node: startNode, distance: 0 });
   dist[startNode - 1] = 0;
 
   while (!pq.isEmpty()) {
     const { node: currentNode, distance: currentDist } = pq.dequeue();
-
-    if (visited[currentNode - 1]) continue;
-    visited[currentNode - 1] = true;
+    
+    if(dist[currentNode-1] < currentDist){
+continue
+	   }
 
     graph[currentNode - 1].forEach(({ node: nextNode, distance: nextDist }) => {
       const newDist = currentDist + nextDist;
